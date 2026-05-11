@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Newsletter - Join Today</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: rgba(20, 20, 20, 0.8);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 12px;
+      padding: 50px 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      font-size: 14px;
+      color: #d4af37;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 15px;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #a0a0a0;
+      line-height: 1.6;
+    }
+
+    .tiers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 40px 0;
+    }
+
+    .tier {
+      padding: 25px;
+      border-radius: 8px;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      background: rgba(212, 175, 55, 0.05);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .tier:hover {
+      border-color: rgba(212, 175, 55, 0.5);
+      background: rgba(212, 175, 55, 0.1);
+      transform: translateY(-5px);
+    }
+
+    .tier-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #d4af37;
+      margin-bottom: 10px;
+    }
+
+    .tier-price {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 15px;
+    }
+
+    .tier-price small {
+      font-size: 14px;
+      color: #a0a0a0;
+    }
+
+    .tier-features {
+      font-size: 13px;
+      color: #a0a0a0;
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+
+    .tier-button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .tier-button.free {
+      background: rgba(212, 175, 55, 0.1);
+      color: #d4af37;
+      border: 1px solid #d4af37;
+    }
+
+    .tier-button.free:hover {
+      background: rgba(212, 175, 55, 0.2);
+    }
+
+    .tier-button.premium {
+      background: #d4af37;
+      color: #0f0f0f;
+    }
+
+    .tier-button.premium:hover {
+      background: #e5c158;
+      transform: scale(1.02);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    input[type="email"]:focus {
+      outline: none;
+      border-color: #d4af37;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    input[type="email"]::placeholder {
+      color: #666;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      padding: 12px;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .message.success {
+      background: rgba(76, 175, 80, 0.1);
+      color: #4caf50;
+      display: block;
+    }
+
+    .message.error {
+      background: rgba(244, 67, 54, 0.1);
+      color: #f44336;
+      display: block;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      color: #d4af37;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .tiers {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">📰 Newsletter</div>
+      <h1>Stay Informed</h1>
+      <p class="subtitle">Get premium insights delivered to your inbox every week. Choose your plan below.</p>
+    </div>
+
+    <div class="tiers">
+      <div class="tier">
+        <div class="tier-name">Free</div>
+        <div class="tier-price">$0<small>/month</small></div>
+        <div class="tier-features">
+          Weekly digest<br>
+          Basic insights<br>
+          Community access
+        </div>
+        <input type="email" id="freeEmail" placeholder="Enter your email" class="form-input">
+        <button class="tier-button free" onclick="signupFree()">Get Started</button>
+      </div>
+
+      <div class="tier">
+        <div class="tier-name">Premium</div>
+        <div class="tier-price">$9<small>/month</small></div>
+        <div class="tier-features">
+          Everything in Free<br>
+          Advanced analysis<br>
+          Priority support
+        </div>
+        <input type="email" id="premiumEmail" placeholder="Enter your email" class="form-input">
+        <button class="tier-button premium" onclick="signupPremium()">Subscribe Now</button>
+      </div>
+    </div>
+
+    <div class="message" id="message"></div>
+    <div class="loading" id="loading">Processing...</div>
+  </div>
+
+  <script>
+    async function signupFree() {
+      const email = document.getElementById('freeEmail').value;
+      const messageEl = document.getElementById('message');
+
+      if (!email) {
+        messageEl.textContent = 'Please enter your email';
+        messageEl.className = 'message error';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          messageEl.textContent = '✓ Welcome! Check your email for confirmation.';
+          messageEl.className = 'message success';
+          document.getElementById('freeEmail').value = '';
+        } else {
+          messageEl.textContent = data.error || 'Signup failed';
+          messageEl.className = 'message error';
+        }
+      } catch (error) {
+        messageEl.textContent = 'Error: ' + error.message;
+        messageEl.className = 'message error';
+      }
+    }
+
+    async function signupPremium() {
+      const email = document.getElementById('premiumEmail').value;
+      const messageEl = document.getElementById('message');
+      const loadingEl = document.getElementById('loading');
+
+      if (!email) {
+        messageEl.textContent = 'Please enter your email';
+        messageEl.className = 'message error';
+        return;
+      }
+
+      loadingEl.style.display = 'block';
+
+      try {
+        const response = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.sessionId) {
+          // Redirect to Stripe checkout (requires Stripe.js in production)
+          window.location.href = `https://checkout.stripe.com/pay/${data.sessionId}`;
+        } else {
+          messageEl.textContent = data.error || 'Checkout failed';
+          messageEl.className = 'message error';
+          loadingEl.style.display = 'none';
+        }
+      } catch (error) {
+        messageEl.textContent = 'Error: ' + error.message;
+        messageEl.className = 'message error';
+        loadingEl.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
