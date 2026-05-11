@@ -230,7 +230,8 @@
         <button class="tier-button free" onclick="signupFree()">Get Started</button>
       </div>
 
-      <div class="tier">
+      <div class="tier" style="opacity: 0.8; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 15px; right: -30px; background: #d4af37; color: #0f0f0f; padding: 5px 40px; transform: rotate(45deg); font-size: 10px; font-weight: bold; letter-spacing: 1px;">SOON</div>
         <div class="tier-name">Premium</div>
         <div class="tier-price">$9<small>/month</small></div>
         <div class="tier-features">
@@ -238,8 +239,8 @@
           Advanced analysis<br>
           Priority support
         </div>
-        <input type="email" id="premiumEmail" placeholder="Enter your email" class="form-input">
-        <button class="tier-button premium" onclick="signupPremium()">Subscribe Now</button>
+        <input type="email" id="premiumEmail" placeholder="Coming Soon" class="form-input" disabled style="cursor: not-allowed; opacity: 0.5;">
+        <button class="tier-button premium" style="background: #333; color: #666; cursor: not-allowed; border: 1px solid #444;" disabled>Coming Soon</button>
       </div>
     </div>
 
