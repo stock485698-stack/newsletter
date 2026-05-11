@@ -272,9 +272,8 @@
         const data = await response.json();
 
         if (response.ok) {
-          messageEl.textContent = '✓ Welcome! Check your email for confirmation.';
-          messageEl.className = 'message success';
-          document.getElementById('freeEmail').value = '';
+          // Redirect to About page with email as query parameter
+          window.location.href = `/about?email=${encodeURIComponent(email)}`;
         } else {
           messageEl.textContent = data.error || 'Signup failed';
           messageEl.className = 'message error';

@@ -64,6 +64,32 @@
       backdrop-filter: blur(10px);
     }
 
+    .confirmation-banner {
+      background: rgba(212, 175, 55, 0.1);
+      border: 2px solid #d4af37;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .confirmation-banner h2 {
+      color: #d4af37;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .confirmation-banner p {
+      color: #a0a0a0;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .email-highlight {
+      color: #d4af37;
+      font-weight: 600;
+    }
+
     h1 {
       font-size: 42px;
       margin-bottom: 30px;
@@ -166,6 +192,13 @@
   </div>
 
   <div class="container">
+    <div id="confirmationBanner" class="confirmation-banner" style="display: none;">
+      <h2>✓ Welcome to The AI Investor!</h2>
+      <p>We'll send our weekly newsletter to:</p>
+      <p class="email-highlight" id="confirmedEmail"></p>
+      <p style="margin-top: 10px; font-size: 14px;">Check your inbox for our first issue!</p>
+    </div>
+
     <h1>About Our Newsletter</h1>
 
     <div class="section">
@@ -208,9 +241,26 @@
 
     <div class="section">
       <h2>Ready to Join?</h2>
-      <p>Start with our free tier and experience the difference quality content makes. Upgrade to premium when you're ready for even deeper insights.</p>
-      <a href="/" class="cta-button">Subscribe Now</a>
+      <p id="ctaText">Start with our free tier and experience the difference quality content makes. Upgrade to premium when you're ready for even deeper insights.</p>
+      <a href="/" class="cta-button" id="ctaButton">Subscribe Now</a>
     </div>
   </div>
+
+  <script>
+    // Check if email is in URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email');
+
+    if (email) {
+      // Show confirmation banner
+      document.getElementById('confirmationBanner').style.display = 'block';
+      document.getElementById('confirmedEmail').textContent = email;
+      
+      // Update CTA text and button
+      document.getElementById('ctaText').textContent = 'Thank you for subscribing! Look forward to your first issue arriving soon.';
+      document.getElementById('ctaButton').textContent = 'Back to Home';
+      document.getElementById('ctaButton').href = '/';
+    }
+  </script>
 </body>
 </html>
