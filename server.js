@@ -2,21 +2,47 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder');
 const path = require('path');
+const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// PostgreSQL Connection Pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/newsletter'
+});
+
+// Initialize database
+async function initializeDatabase() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS subscribers (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        tier VARCHAR(50) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('Database initialized successfully');
+  } catch (error) {
+    console.error('Database initialization error:', error);
+  }
+}
+
+initializeDatabase();
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// In-memory subscriber storage (replace with database in production)
-let subscribers = [];
-
 // Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/about', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'about.html'));
 });
 
 app.get('/success', (req, res) => {
@@ -24,23 +50,29 @@ app.get('/success', (req, res) => {
 });
 
 // Free tier signup
-app.post('/api/signup', (req, res) => {
+app.post('/api/signup', async (req, res) => {
   const { email } = req.body;
   
   if (!email) {
     return res.status(400).json({ error: 'Email is required' });
   }
   
-  if (subscribers.find(sub => sub.email === email)) {
-    return res.status(400).json({ error: 'Email already subscribed' });
+  try {
+    const result = await pool.query(
+      'INSERT INTO subscribers (email, tier) VALUES ($1, $2) RETURNING *',
+      [email, 'free']
+    );
+    res.json({ success: true, message: 'Subscribed to free tier', subscriber: result.rows[0] });
+  } catch (error) {
+    if (error.code === '23505') {
+      return res.status(400).json({ error: 'Email already subscribed' });
+    }
+    res.status(500).json({ error: 'Database error' });
   }
-  
-  subscribers.push({ email, tier: 'free', date: new Date() });
-  res.json({ success: true, message: 'Subscribed to free tier' });
 });
 
 // Stripe checkout session
-app.post('/api/checkout', (req, res) => {
+app.post('/api/checkout', async (req, res) => {
   const { email } = req.body;
   
   if (!email) {
@@ -78,8 +110,13 @@ app.post('/api/checkout', (req, res) => {
 });
 
 // Admin API - view all subscribers
-app.get('/api/admin/subscribers', (req, res) => {
-  res.json({ subscribers, count: subscribers.length });
+app.get('/api/admin/subscribers', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT email, tier, created_at FROM subscribers ORDER BY created_at DESC');
+    res.json({ subscribers: result.rows, count: result.rows.length });
+  } catch (error) {
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
 // Health check
