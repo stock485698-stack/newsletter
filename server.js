@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder');
 const path = require('path');
 const { Pool } = require('pg');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,6 +13,23 @@ const PORT = process.env.PORT || 3000;
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/newsletter'
 });
+
+// Email Transporter Setup
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER || 'your-email@gmail.com',
+    pass: process.env.GMAIL_PASSWORD || 'your-app-password'
+  }
+});
+
+// Read email template
+let emailTemplate = '';
+try {
+  emailTemplate = fs.readFileSync(path.join(__dirname, 'email_template.html'), 'utf8');
+} catch (error) {
+  console.error('Error reading email template:', error);
+}
 
 // Initialize database
 async function initializeDatabase() {
@@ -49,6 +68,26 @@ app.get('/success', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'success.html'));
 });
 
+// Function to send welcome email
+async function sendWelcomeEmail(email) {
+  try {
+    const mailOptions = {
+      from: process.env.GMAIL_USER || 'your-email@gmail.com',
+      to: email,
+      subject: '📰 Welcome to The AI Investor - Your First Issue Inside!',
+      html: emailTemplate,
+      text: 'Welcome to The AI Investor newsletter! Please view this email in HTML format to see the full content.'
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Welcome email sent to ${email}`);
+    return true;
+  } catch (error) {
+    console.error(`Error sending email to ${email}:`, error);
+    return false;
+  }
+}
+
 // Free tier signup
 app.post('/api/signup', async (req, res) => {
   const { email } = req.body;
@@ -62,11 +101,16 @@ app.post('/api/signup', async (req, res) => {
       'INSERT INTO subscribers (email, tier) VALUES ($1, $2) RETURNING *',
       [email, 'free']
     );
+    
+    // Send welcome email asynchronously (don't wait for it)
+    sendWelcomeEmail(email);
+    
     res.json({ success: true, message: 'Subscribed to free tier', subscriber: result.rows[0] });
   } catch (error) {
     if (error.code === '23505') {
       return res.status(400).json({ error: 'Email already subscribed' });
     }
+    console.error('Signup error:', error);
     res.status(500).json({ error: 'Database error' });
   }
 });
